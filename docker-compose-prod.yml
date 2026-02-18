@@ -1,0 +1,16 @@
+
+services:
+  spring-app:
+    # 운영용 컨테이너 이름 (선택사항, 구분하기 좋음)
+    container_name: spring-app-prod
+    
+    build:
+      context: .
+      dockerfile: Dockerfile  # [변경] 운영용(Jar 빌드) Dockerfile로 교체
+      
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod # [변경] 운영 프로필로 교체
+      
+    # 중요: 운영 환경에서는 소스 코드 볼륨 마운트가 필요 없거나 
+    # JAR 파일 위치와 겹칠 수 있으므로 주의해야 합니다.
+    # 하지만 단순히 프로필과 이미지만 바꾸는 경우라면 위 설정만으로 충분합니다.

@@ -1,0 +1,22 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    # Docker 내부 통신이므로 서비스명 'postgres' 사용
+    url: jdbc:postgresql://postgres:5432/mydb
+    username: hsj
+    password: runner12
+  jpa:
+    hibernate:
+      ddl-auto: update # 개발 중에는 update가 편함
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  # DevTools 설정 (자동 리로드를 위해 필수)
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true

@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    # 운영 환경에서도 같은 Docker 네트워크라면 'postgres' 사용
+    # 만약 외부 RDS 등을 쓴다면 실제 IP/URL 입력
+    url: jdbc:postgresql://postgres:5432/mydb 
+    username: hsj
+    password: runner12
+  jpa:
+    hibernate:
+      ddl-auto: validate # 운영에서는 절대 create/update 금지
+    show-sql: false

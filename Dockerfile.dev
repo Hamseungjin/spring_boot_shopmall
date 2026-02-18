@@ -1,0 +1,10 @@
+FROM maven:3.9.6-eclipse-temurin-17
+
+WORKDIR /app
+
+# 전체 소스 복사 (docker-compose에서 볼륨 마운트 하더라도 이미지 빌드 시 필요)
+# COPY . . 
+# 개발용에서는 보통 docker-compose의 volumes: - .:/app 이 역할을 대신하므로 
+# COPY는 생략해도 되지만, 초기 의존성 다운로드를 위해 pom.xml만 먼저 복사하기도 함.
+
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.profiles=dev"]
