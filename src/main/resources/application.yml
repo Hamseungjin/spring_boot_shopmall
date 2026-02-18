@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: ecommerce-mvp
+  profiles:
+    active: dev
+
+server:
+  port: 8081
