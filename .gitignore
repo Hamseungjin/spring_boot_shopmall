@@ -1,9 +1,26 @@
+# Maven
 .mvn/wrapper/maven-wrapper.jar
+target/
+
+# IDE
 .idea/
 **/*.iml
-target/
+.vscode/
+
+# Java
 *.class
 *.jar
 *.war
+
+# Logs
 *.log
+
+# OS
 .DS_Store
+
+# App
+uploads/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/

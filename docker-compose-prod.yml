@@ -1,16 +1,37 @@
-
 services:
   spring-app:
-    # 운영용 컨테이너 이름 (선택사항, 구분하기 좋음)
     container_name: spring-app-prod
-    
     build:
       context: .
-      dockerfile: Dockerfile  # [변경] 운영용(Jar 빌드) Dockerfile로 교체
-      
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
     environment:
-      - SPRING_PROFILES_ACTIVE=prod # [변경] 운영 프로필로 교체
-      
-    # 중요: 운영 환경에서는 소스 코드 볼륨 마운트가 필요 없거나 
-    # JAR 파일 위치와 겹칠 수 있으므로 주의해야 합니다.
-    # 하지만 단순히 프로필과 이미지만 바꾸는 경우라면 위 설정만으로 충분합니다.
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:15
+    container_name: postgres-prod
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: hsj
+      POSTGRES_PASSWORD: runner12
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_prod:/data
+
+volumes:
+  postgres_data_prod:
+  redis_data_prod:
