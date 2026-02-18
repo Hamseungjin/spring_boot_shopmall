@@ -11,11 +11,13 @@ import {
   Search,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { useCartStore } from '@/stores/cartStore';
 import api from '@/lib/axios';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, member, logout: clearAuth } = useAuthStore();
+  const cartItemCount = useCartStore((s) => s.items.length);
   const navigate = useNavigate();
 
   const isAdmin = member?.role === 'ADMIN';
@@ -79,6 +81,17 @@ export default function Navbar() {
             className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
           >
             <Search className="h-5 w-5" />
+          </Link>
+          <Link
+            to="/cart"
+            className="relative rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {cartItemCount > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary-600 text-[10px] font-bold text-white">
+                {cartItemCount}
+              </span>
+            )}
           </Link>
 
           {isAuthenticated ? (

@@ -79,3 +79,51 @@ export interface Order {
   items: OrderItem[];
   createdAt: string;
 }
+
+export interface CartItemData {
+  productId: number;
+  name: string;
+  price: number;
+  imageUrl?: string;
+  quantity: number;
+  stockQuantity: number;
+}
+
+export interface KpiSummary {
+  totalRevenue: number;
+  totalOrders: number;
+  paidOrders: number;
+  newMembers: number;
+  totalVisitors: number;
+  conversionRate: number;
+  onlineUsers: number;
+}
+
+export interface DailySales {
+  date: string;
+  revenue: number;
+  orderCount: number;
+}
+
+export interface CategorySales {
+  categoryId: number;
+  categoryName: string;
+  revenue: number;
+  quantity: number;
+}
+
+export interface DashboardData {
+  kpi: KpiSummary;
+  dailySales: DailySales[];
+  categorySales: CategorySales[];
+}
+
+export interface PaymentResponse {
+  paymentId: number;
+  orderId: number;
+  idempotencyKey: string;
+  amount: number;
+  paymentMethod: string;
+  status: string;
+  createdAt: string;
+}

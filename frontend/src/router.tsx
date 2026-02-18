@@ -5,6 +5,12 @@ import HomePage from '@/pages/HomePage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
+import ProductListPage from '@/pages/products/ProductListPage';
+import ProductDetailPage from '@/pages/products/ProductDetailPage';
+import CartPage from '@/pages/CartPage';
+import CheckoutPage from '@/pages/orders/CheckoutPage';
+import OrderListPage from '@/pages/orders/OrderListPage';
+import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
 
 export const router = createBrowserRouter([
   {
@@ -13,13 +19,22 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'signup', element: <SignupPage /> },
-      { path: 'products', element: <PlaceholderPage title="상품 목록" /> },
-      { path: 'products/:id', element: <PlaceholderPage title="상품 상세" /> },
+      { path: 'products', element: <ProductListPage /> },
+      { path: 'products/:id', element: <ProductDetailPage /> },
+      { path: 'cart', element: <CartPage /> },
+      {
+        path: 'checkout',
+        element: (
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: 'orders',
         element: (
           <ProtectedRoute>
-            <PlaceholderPage title="주문 내역" />
+            <OrderListPage />
           </ProtectedRoute>
         ),
       },
@@ -35,7 +50,7 @@ export const router = createBrowserRouter([
         path: 'admin',
         element: (
           <ProtectedRoute requireAdmin>
-            <PlaceholderPage title="관리자 대시보드" />
+            <AdminDashboardPage />
           </ProtectedRoute>
         ),
       },
