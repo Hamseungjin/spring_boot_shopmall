@@ -39,10 +39,16 @@ public enum ErrorCode {
     // Order
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "O001", "주문을 찾을 수 없습니다."),
     INVALID_ORDER_STATUS(HttpStatus.BAD_REQUEST, "O002", "잘못된 주문 상태 전이입니다."),
+    ORDER_NOT_CANCELLABLE(HttpStatus.BAD_REQUEST, "O003", "취소할 수 없는 주문 상태입니다."),
+    ORDER_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "O004", "주문 아이템을 찾을 수 없습니다."),
+    EMPTY_ORDER_ITEMS(HttpStatus.BAD_REQUEST, "O005", "주문 상품이 비어있습니다."),
+    LOCK_ACQUISITION_FAILED(HttpStatus.CONFLICT, "O006", "동시 요청으로 인해 처리할 수 없습니다. 잠시 후 다시 시도해주세요."),
 
     // Payment
     DUPLICATE_PAYMENT(HttpStatus.CONFLICT, "PAY001", "이미 처리된 결제 요청입니다."),
-    PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "PAY002", "결제에 실패했습니다.");
+    PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "PAY002", "결제에 실패했습니다."),
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAY003", "결제 정보를 찾을 수 없습니다."),
+    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAY004", "결제 금액이 주문 금액과 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

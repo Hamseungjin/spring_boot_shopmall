@@ -1,5 +1,7 @@
 package com.hsj.dto.order;
 
+import com.hsj.entity.Order;
+import com.hsj.entity.OrderItem;
 import com.hsj.entity.enums.OrderItemStatus;
 import com.hsj.entity.enums.OrderStatus;
 import lombok.Builder;
@@ -33,5 +35,35 @@ public class OrderResponse {
         private int quantity;
         private BigDecimal subtotal;
         private OrderItemStatus status;
+
+        public static OrderItemResponse from(OrderItem item) {
+            return OrderItemResponse.builder()
+                    .orderItemId(item.getId())
+                    .productId(item.getProduct().getId())
+                    .snapshotProductName(item.getSnapshotProductName())
+                    .snapshotPrice(item.getSnapshotPrice())
+                    .quantity(item.getQuantity())
+                    .subtotal(item.getSubtotal())
+                    .status(item.getStatus())
+                    .build();
+        }
+    }
+
+    public static OrderResponse from(Order order) {
+        List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
+                .map(OrderItemResponse::from)
+                .toList();
+
+        return OrderResponse.builder()
+                .orderId(order.getId())
+                .orderNumber(order.getOrderNumber())
+                .status(order.getStatus())
+                .totalAmount(order.getTotalAmount())
+                .shippingAddress(order.getShippingAddress())
+                .receiverName(order.getReceiverName())
+                .receiverPhone(order.getReceiverPhone())
+                .items(itemResponses)
+                .createdAt(order.getCreatedAt())
+                .build();
     }
 }
