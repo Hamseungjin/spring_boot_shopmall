@@ -77,7 +77,7 @@ export default function Navbar() {
         {/* Desktop Right */}
         <div className="hidden items-center gap-2 md:flex">
           <Link
-            to="/products"
+            to="/products/search"
             className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
           >
             <Search className="h-5 w-5" />
