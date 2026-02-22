@@ -7,65 +7,113 @@ import LoginPage from '@/pages/auth/LoginPage';
 import SignupPage from '@/pages/auth/SignupPage';
 import ProductListPage from '@/pages/products/ProductListPage';
 import ProductDetailPage from '@/pages/products/ProductDetailPage';
+import ProductSearchPage from '@/pages/products/ProductSearchPage';
 import CartPage from '@/pages/CartPage';
 import CheckoutPage from '@/pages/orders/CheckoutPage';
 import OrderListPage from '@/pages/orders/OrderListPage';
+import OrderDetailPage from '@/pages/orders/OrderDetailPage';
+import MyPage from '@/pages/MyPage';
 import AdminDashboardPage from '@/pages/admin/AdminDashboardPage';
+import AdminProductListPage from '@/pages/admin/AdminProductListPage';
+import AdminProductFormPage from '@/pages/admin/AdminProductFormPage';
+import AdminOrderListPage from '@/pages/admin/AdminOrderListPage';
+import AdminCategoryPage from '@/pages/admin/AdminCategoryPage';
 
-export const router = createBrowserRouter([
-  {
-    element: <Layout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: 'login', element: <LoginPage /> },
-      { path: 'signup', element: <SignupPage /> },
-      { path: 'products', element: <ProductListPage /> },
-      { path: 'products/:id', element: <ProductDetailPage /> },
-      { path: 'cart', element: <CartPage /> },
-      {
-        path: 'checkout',
-        element: (
-          <ProtectedRoute>
-            <CheckoutPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'orders',
-        element: (
-          <ProtectedRoute>
-            <OrderListPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'mypage',
-        element: (
-          <ProtectedRoute>
-            <PlaceholderPage title="마이페이지" />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'admin',
-        element: (
-          <ProtectedRoute requireAdmin>
-            <AdminDashboardPage />
-          </ProtectedRoute>
-        ),
-      },
-      { path: '*', element: <NotFoundPage /> },
-    ],
-  },
-]);
-
-function PlaceholderPage({ title }: { title: string }) {
-  return (
-    <div className="flex min-h-[40vh] items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-        <p className="mt-2 text-gray-500">이 페이지는 다음 단계에서 구현됩니다.</p>
-      </div>
-    </div>
-  );
-}
+export const router = createBrowserRouter(
+  [
+    {
+      element: <Layout />,
+      children: [
+        { index: true, element: <HomePage /> },
+        { path: 'login', element: <LoginPage /> },
+        { path: 'signup', element: <SignupPage /> },
+        { path: 'products', element: <ProductListPage /> },
+        { path: 'products/search', element: <ProductSearchPage /> },
+        { path: 'products/:id', element: <ProductDetailPage /> },
+        { path: 'cart', element: <CartPage /> },
+        {
+          path: 'checkout',
+          element: (
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'orders',
+          element: (
+            <ProtectedRoute>
+              <OrderListPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'orders/:id',
+          element: (
+            <ProtectedRoute>
+              <OrderDetailPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'mypage',
+          element: (
+            <ProtectedRoute>
+              <MyPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'admin',
+          element: (
+            <ProtectedRoute requireAdmin>
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'admin/products',
+          element: (
+            <ProtectedRoute requireAdmin>
+              <AdminProductListPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'admin/products/new',
+          element: (
+            <ProtectedRoute requireAdmin>
+              <AdminProductFormPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'admin/products/:id/edit',
+          element: (
+            <ProtectedRoute requireAdmin>
+              <AdminProductFormPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'admin/orders',
+          element: (
+            <ProtectedRoute requireAdmin>
+              <AdminOrderListPage />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: 'admin/categories',
+          element: (
+            <ProtectedRoute requireAdmin>
+              <AdminCategoryPage />
+            </ProtectedRoute>
+          ),
+        },
+        { path: '*', element: <NotFoundPage /> },
+      ],
+    },
+  ],
+  { basename: '/app' }
+);

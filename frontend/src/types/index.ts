@@ -118,6 +118,16 @@ export interface DashboardData {
   categorySales: CategorySales[];
 }
 
+export interface OrderStatusHistory {
+  id: number;
+  orderId: number;
+  previousStatus: string;
+  newStatus: string;
+  reason?: string;
+  changedBy?: string;
+  createdAt: string;
+}
+
 export interface PaymentResponse {
   paymentId: number;
   orderId: number;
@@ -127,3 +137,14 @@ export interface PaymentResponse {
   status: string;
   createdAt: string;
 }
+
+export interface ProductCreatePayload {
+  name: string;
+  description?: string;
+  price: number;
+  stockQuantity: number;
+  categoryId?: number;
+}
+
+export interface ProductUpdatePayload extends ProductCreatePayload {}
+
