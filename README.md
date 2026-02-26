@@ -135,86 +135,91 @@ npm run build
 
 ## API 엔드포인트
 
-### 인증
+  1. 일반 사용자 (USER / GUEST)
+  일반 사용자는 주로 상품 조회, 장바구니 이용, 주문 및 결제, 마이페이지 관련 경로에 접근할 수 있습니다. (GUEST는 조회 위주, USER는 인증 후 주문/관리 가능)
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| POST | `/api/auth/signup` | 회원가입 | 공개 |
-| POST | `/api/auth/login` | 로그인 (JWT 발급) | 공개 |
-| POST | `/api/auth/refresh` | 토큰 갱신 | 공개 |
-| POST | `/api/auth/logout` | 로그아웃 | 인증 |
-| GET | `/api/members/me` | 내 정보 조회 | 인증 |
 
-### 상품
+  [Frontend - UI 경로]
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| GET | `/api/products` | 상품 목록 (페이징) | 공개 |
-| GET | `/api/products/search` | 상품 검색 (Querydsl 필터) | 공개 |
-| GET | `/api/products/{id}` | 상품 상세 | 공개 |
-| POST | `/api/products` | 상품 등록 | ADMIN |
-| PUT | `/api/products/{id}` | 상품 수정 | ADMIN |
-| DELETE | `/api/products/{id}` | 상품 삭제 | ADMIN |
-| POST | `/api/products/{id}/image` | 이미지 업로드 | ADMIN |
-| PATCH | `/api/products/{id}/stock` | 재고 추가 | ADMIN |
+  ┌───────────┬─────────────────────────┬────────────────────────────┐
+  │ 구분      │ 경로 (URL)              │ 설명                       │
+  ├───────────┼─────────────────────────┼────────────────────────────┤
+  │ 공통/조회 │ /app                    │ 메인 홈 페이지             │
+  │           │ /app/login, /app/signup │ 로그인 및 회원가입 페이지  │
+  │           │ /app/products           │ 상품 목록 페이지           │
+  │           │ /app/products/:id       │ 상품 상세 페이지           │
+  │           │ /app/products/search    │ 상품 검색 결과 페이지      │
+  │           │ /app/cart               │ 장바구니 페이지            │
+  │ 인증 필요 │ /app/checkout           │ 주문서 작성 및 결제 페이지 │
+  │           │ /app/orders             │ 나의 주문 목록 페이지      │
+  │           │ /app/orders/:id         │ 주문 상세 내역 페이지      │
+  │           │ /app/mypage             │ 마이페이지 (내 정보 조회)  │
+  └───────────┴─────────────────────────┴────────────────────────────┘
 
-### 카테고리
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| GET | `/api/categories` | 카테고리 목록 | 공개 |
-| GET | `/api/categories/tree` | 트리 구조 | 공개 |
-| POST | `/api/categories` | 카테고리 등록 | ADMIN |
 
-### 장바구니
+  [Backend - API Endpoint]
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| GET | `/api/cart` | 장바구니 조회 | 인증 |
-| POST | `/api/cart/items` | 아이템 추가 | 인증 |
-| PATCH | `/api/cart/items/{productId}` | 수량 변경 | 인증 |
-| DELETE | `/api/cart/items/{productId}` | 아이템 삭제 | 인증 |
-| DELETE | `/api/cart` | 장바구니 비우기 | 인증 |
+  ┌───────────────┬─────────────────────────────────────┬─────────────┬────────────────────┐
+  │ 기능          │ 엔드포인트                          │ HTTP Method │ 접근 권한          │
+  ├───────────────┼─────────────────────────────────────┼─────────────┼────────────────────┤
+  │ 인증/계정     │ /api/auth/signup, /api/auth/login   │ POST        │ 전체 허용          │
+  │               │ /api/auth/logout, /api/auth/refresh │ POST        │ 인증 필요          │
+  │               │ /api/members/me                     │ GET         │ 인증 필요          │
+  │ 상품/카테고리 │ /api/products/**                    │ GET         │ 전체 허용          │
+  │               │ /api/categories/**                  │ GET         │ 전체 허용          │
+  │ 장바구니      │ /api/cart/**                        │ ALL         │ 인증 필요          │
+  │ 주문/결제     │ /api/orders (생성/조회/취소)        │ POST, GET   │ 인증 필요          │
+  │               │ /api/payments/**                    │ POST, GET   │ 인증 필요          │
+  │ 이벤트/로그   │ /api/events, /api/events/batch      │ POST        │ 전체 허용 (트래킹) │
+  │               │ /api/events/realtime/**             │ GET         │ 전체 허용          │
+  └───────────────┴─────────────────────────────────────┴─────────────┴────────────────────┘
 
-### 주문
+  ---
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| POST | `/api/orders` | 주문 생성 (분산 락 재고 차감) | 인증 |
-| GET | `/api/orders/my` | 내 주문 목록 | 인증 |
-| GET | `/api/orders/{id}` | 주문 상세 | 인증 |
-| POST | `/api/orders/{id}/cancel` | 주문 취소 (재고 복원) | 인증 |
-| POST | `/api/orders/{id}/items/{itemId}/cancel` | 아이템 부분 취소 | 인증 |
-| PATCH | `/api/orders/{id}/status` | 상태 변경 | ADMIN |
-| GET | `/api/orders/{id}/history` | 상태 변경 이력 | 인증 |
 
-### 결제
+  2. 관리자 (ADMIN)
+  관리자는 일반 사용자의 모든 기능을 포함하여, 상품/카테고리 관리 및 시스템 통계(대시보드) 경로에 독점적으로 접근할 수 있습니다.
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| POST | `/api/payments` | 결제 (Idempotency-Key 필수) | 인증 |
-| GET | `/api/payments/order/{orderId}` | 결제 조회 | 인증 |
-| POST | `/api/payments/order/{orderId}/cancel` | 결제 취소 | 인증 |
 
-### 이벤트 로깅
+  [Frontend - UI 경로]
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| POST | `/api/events` | 이벤트 수집 (비동기) | 공개 |
-| POST | `/api/events/batch` | 배치 이벤트 수집 | 공개 |
-| GET | `/api/events/realtime/online` | 실시간 접속자 수 | 공개 |
-| GET | `/api/events/realtime/product/{id}/views` | 상품 뷰 카운트 | 공개 |
-| GET | `/api/events/export?from=&to=` | 로그 CSV 다운로드 | 인증 |
+  ┌──────────────────────────────┬───────────────────────┐
+  │ 경로 (URL)                   │ 설명                  │
+  ├──────────────────────────────┼───────────────────────┤
+  │ /app/admin                   │ 관리자 메인 대시보드  │
+  │ /app/admin/products          │ 상품 관리 목록        │
+  │ /app/admin/products/new      │ 새 상품 등록 페이지   │
+  │ /app/admin/products/:id/edit │ 상품 정보 수정 페이지 │
+  │ /app/admin/categories        │ 카테고리 관리 페이지  │
+  │ /app/admin/orders            │ 전체 주문 관리 목록   │
+  └──────────────────────────────┴───────────────────────┘
 
-### 관리자 대시보드
 
-| Method | URL | 설명 | 권한 |
-|---|---|---|---|
-| GET | `/api/admin/dashboard?from=&to=` | 통합 대시보드 | ADMIN |
-| GET | `/api/admin/dashboard/kpi` | KPI 카드 | ADMIN |
-| GET | `/api/admin/dashboard/sales/daily` | 일별 매출 | ADMIN |
-| GET | `/api/admin/dashboard/sales/category` | 카테고리별 매출 | ADMIN |
 
+  [Backend - API Endpoint]
+
+  ┌───────────────┬──────────────────────────────────────────┬─────────────┬───────────────────┐
+  │ 기능          │ 엔드포인트                               │ HTTP Method │ 접근 권한         │
+  ├───────────────┼──────────────────────────────────────────┼─────────────┼───────────────────┤
+  │ 대시보드      │ /api/admin/dashboard/**                  │ GET         │ ADMIN             │
+  │ 상품 관리     │ /api/products (등록)                     │ POST        │ ADMIN             │
+  │               │ /api/products/{id} (수정/삭제)           │ PUT, DELETE │ ADMIN             │
+  │               │ /api/products/{id}/image (이미지 업로드) │ POST        │ ADMIN             │
+  │               │ /api/products/{id}/stock (재고 수정)     │ PATCH       │ ADMIN             │
+  │ 카테고리 관리 │ /api/categories (등록)                   │ POST        │ ADMIN             │
+  │               │ /api/categories/{id} (수정/삭제)         │ PUT, DELETE │ ADMIN             │
+  │ 주문 관리     │ /api/orders/{orderId}/status (상태 변경) │ PATCH       │ ADMIN             │
+  │ 데이터 추출   │ /api/events/export (로그 추출)           │ GET         │ ADMIN (인증 필요) │
+  └───────────────┴──────────────────────────────────────────┴─────────────┴───────────────────┘
+
+  ---
+
+
+  특이사항:
+   - Security 설정: SecurityConfig.java에서 /api/admin/** 경로는 hasRole('ADMIN')으로 엄격히 제한되어 있으며, 상품 및 카테고리의 CUD(생성, 수정, 삭제) 작업은
+     Controller 레벨에서 @PreAuthorize("hasRole('ADMIN')") 어노테이션을 통해 보호되고 있습니다.
+   - 파일 업로드: /uploads/** 경로는 상품 이미지 조회를 위해 전체 공개되어 있습니다.
 ---
 
 ## 핵심 설계

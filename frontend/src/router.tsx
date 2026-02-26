@@ -19,6 +19,8 @@ import AdminProductFormPage from '@/pages/admin/AdminProductFormPage';
 import AdminOrderListPage from '@/pages/admin/AdminOrderListPage';
 import AdminCategoryPage from '@/pages/admin/AdminCategoryPage';
 
+
+
 export const router = createBrowserRouter(
   [
     {
@@ -33,83 +35,43 @@ export const router = createBrowserRouter(
         { path: 'cart', element: <CartPage /> },
         {
           path: 'checkout',
-          element: (
-            <ProtectedRoute>
-              <CheckoutPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute><CheckoutPage /></ProtectedRoute>,
         },
         {
           path: 'orders',
-          element: (
-            <ProtectedRoute>
-              <OrderListPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute><OrderListPage /></ProtectedRoute>,
         },
         {
           path: 'orders/:id',
-          element: (
-            <ProtectedRoute>
-              <OrderDetailPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute><OrderDetailPage /></ProtectedRoute>,
         },
         {
           path: 'mypage',
-          element: (
-            <ProtectedRoute>
-              <MyPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute><MyPage /></ProtectedRoute>,
         },
         {
           path: 'admin',
-          element: (
-            <ProtectedRoute requireAdmin>
-              <AdminDashboardPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute requireAdmin><AdminDashboardPage /></ProtectedRoute>,
         },
         {
           path: 'admin/products',
-          element: (
-            <ProtectedRoute requireAdmin>
-              <AdminProductListPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute requireAdmin><AdminProductListPage /></ProtectedRoute>,
         },
         {
           path: 'admin/products/new',
-          element: (
-            <ProtectedRoute requireAdmin>
-              <AdminProductFormPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute requireAdmin><AdminProductFormPage /></ProtectedRoute>,
         },
         {
           path: 'admin/products/:id/edit',
-          element: (
-            <ProtectedRoute requireAdmin>
-              <AdminProductFormPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute requireAdmin><AdminProductFormPage /></ProtectedRoute>,
         },
         {
           path: 'admin/orders',
-          element: (
-            <ProtectedRoute requireAdmin>
-              <AdminOrderListPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute requireAdmin><AdminOrderListPage /></ProtectedRoute>,
         },
         {
           path: 'admin/categories',
-          element: (
-            <ProtectedRoute requireAdmin>
-              <AdminCategoryPage />
-            </ProtectedRoute>
-          ),
+          element: <ProtectedRoute requireAdmin><AdminCategoryPage /></ProtectedRoute>,
         },
         { path: '*', element: <NotFoundPage /> },
       ],
