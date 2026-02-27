@@ -18,6 +18,9 @@ target/
 # OS
 .DS_Store
 
+# Secrets
+.env
+
 # App
 uploads/
 
