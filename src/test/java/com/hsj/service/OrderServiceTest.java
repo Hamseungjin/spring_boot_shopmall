@@ -16,6 +16,7 @@ import com.hsj.repository.MemberRepository;
 import com.hsj.repository.OrderHistoryRepository;
 import com.hsj.repository.OrderItemRepository;
 import com.hsj.repository.OrderRepository;
+import com.hsj.repository.PaymentRepository;
 import com.hsj.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,7 @@ class OrderServiceTest {
     @Mock private OrderHistoryRepository orderHistoryRepository;
     @Mock private ProductRepository productRepository;
     @Mock private MemberRepository memberRepository;
+    @Mock private PaymentRepository paymentRepository;
     @Mock private StockService stockService;
 
     @InjectMocks

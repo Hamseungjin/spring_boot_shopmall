@@ -5,6 +5,7 @@ import com.hsj.dto.order.*;
 import com.hsj.entity.*;
 import com.hsj.entity.enums.OrderItemStatus;
 import com.hsj.entity.enums.OrderStatus;
+import com.hsj.entity.enums.PaymentStatus;
 import com.hsj.exception.BusinessException;
 import com.hsj.exception.ErrorCode;
 import com.hsj.exception.NotFoundException;
@@ -30,6 +31,7 @@ public class OrderService {
     private final OrderHistoryRepository orderHistoryRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
+    private final PaymentRepository paymentRepository;
     private final StockService stockService;
 
     @Transactional
@@ -157,6 +159,16 @@ public class OrderService {
             }
         }
 
+        // 결제가 완료된 상태에서 취소하는 경우 결제도 취소 처리
+        if (previousStatus == OrderStatus.PAID || previousStatus == OrderStatus.PREPARING) {
+            paymentRepository.findByOrderId(order.getId()).ifPresent(payment -> {
+                if (payment.getStatus() == PaymentStatus.COMPLETED) {
+                    payment.cancel();
+                    log.info("결제 취소 처리: orderId={}, paymentId={}", orderId, payment.getId());
+                }
+            });
+        }
+
         orderHistoryRepository.save(
                 OrderHistory.record(order, previousStatus, OrderStatus.CANCELLED,
                         reason != null ? reason : "고객 요청 취소", cancelledBy)
@@ -201,6 +213,14 @@ public class OrderService {
         return orderHistoryRepository.findByOrderIdOrderByCreatedAtDesc(orderId).stream()
                 .map(OrderHistoryResponse::from)
                 .toList();
+    }
+
+    /** 요청자가 주문 소유자인지 확인한다. 아닐 경우 ACCESS_DENIED 예외를 던진다. */
+    public void verifyOwnership(Long orderId, Long memberId) {
+        Order order = findOrderOrThrow(orderId);
+        if (!order.getMember().getId().equals(memberId)) {
+            throw new BusinessException(ErrorCode.ACCESS_DENIED, "본인의 주문만 접근할 수 있습니다.");
+        }
     }
 
     private Order findOrderOrThrow(Long orderId) {

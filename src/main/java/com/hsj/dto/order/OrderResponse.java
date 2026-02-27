@@ -16,6 +16,7 @@ import java.util.List;
 public class OrderResponse {
 
     private Long orderId;
+    private Long memberId;
     private String orderNumber;
     private OrderStatus status;
     private BigDecimal totalAmount;
@@ -56,6 +57,7 @@ public class OrderResponse {
 
         return OrderResponse.builder()
                 .orderId(order.getId())
+                .memberId(order.getMember().getId())
                 .orderNumber(order.getOrderNumber())
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())

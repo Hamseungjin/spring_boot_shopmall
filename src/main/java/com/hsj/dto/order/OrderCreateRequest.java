@@ -1,7 +1,7 @@
 package com.hsj.dto.order;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,12 +21,18 @@ public class OrderCreateRequest {
     private String receiverPhone;
 
     @NotEmpty(message = "주문 상품이 비어있습니다.")
+    @Valid
     private List<OrderItemRequest> items;
 
     @Getter
     @NoArgsConstructor
     public static class OrderItemRequest {
+
+        @NotNull(message = "상품 ID는 필수입니다.")
         private Long productId;
+
+        @Positive(message = "수량은 1 이상이어야 합니다.")
+        @Max(value = 100, message = "수량은 최대 100개까지 가능합니다.")
         private int quantity;
     }
 }
