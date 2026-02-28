@@ -48,7 +48,16 @@ public enum ErrorCode {
     DUPLICATE_PAYMENT(HttpStatus.CONFLICT, "PAY001", "이미 처리된 결제 요청입니다."),
     PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "PAY002", "결제에 실패했습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAY003", "결제 정보를 찾을 수 없습니다."),
-    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAY004", "결제 금액이 주문 금액과 일치하지 않습니다.");
+    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAY004", "결제 금액이 주문 금액과 일치하지 않습니다."),
+
+    // Review
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "리뷰를 찾을 수 없습니다."),
+    DUPLICATE_REVIEW(HttpStatus.CONFLICT, "R002", "이미 해당 주문의 상품에 대한 리뷰를 작성했습니다."),
+    ORDER_NOT_DELIVERED(HttpStatus.BAD_REQUEST, "R003", "배송 완료된 주문에만 리뷰를 작성할 수 있습니다."),
+    ORDER_PRODUCT_MISMATCH(HttpStatus.BAD_REQUEST, "R004", "해당 주문에 포함된 상품이 아닙니다."),
+
+    // Rate Limit
+    TOO_MANY_REQUESTS(HttpStatus.TOO_MANY_REQUESTS, "AUTH006", "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.");
 
     private final HttpStatus httpStatus;
     private final String code;

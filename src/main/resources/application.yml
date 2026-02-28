@@ -12,7 +12,7 @@ server:
   port: 8081
 
 jwt:
-  secret: Y2hhbmdlLXRoaXMtdG8tYS1zZWN1cmUtcmFuZG9tLWtleS1pbi1wcm9kdWN0aW9uLWVudmlyb25tZW50LW11c3QtYmUtMjU2LWJpdHM=
+  secret: ${JWT_SECRET:Y2hhbmdlLXRoaXMtdG8tYS1zZWN1cmUtcmFuZG9tLWtleS1pbi1wcm9kdWN0aW9uLWVudmlyb25tZW50LW11c3QtYmUtMjU2LWJpdHM=}
   access-token-expiration: 1800000
   refresh-token-expiration: 604800000
 

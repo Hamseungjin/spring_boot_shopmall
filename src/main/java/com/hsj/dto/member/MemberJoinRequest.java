@@ -1,8 +1,6 @@
 package com.hsj.dto.member;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +14,10 @@ public class MemberJoinRequest {
 
     @NotBlank(message = "비밀번호는 필수입니다.")
     @Size(min = 8, max = 100, message = "비밀번호는 8자 이상 100자 이하여야 합니다.")
+    @Pattern(
+        regexp = "^(?=.*[A-Za-z])(?=.*\\d).*$",
+        message = "비밀번호는 영문자와 숫자를 모두 포함해야 합니다."
+    )
     private String password;
 
     @NotBlank(message = "이름은 필수입니다.")
