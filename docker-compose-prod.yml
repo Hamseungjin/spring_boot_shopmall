@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
+    volumes:
+      - ./logs:/app/logs        # 호스트 루트의 logs/ ↔ 컨테이너 /app/logs
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     depends_on:
