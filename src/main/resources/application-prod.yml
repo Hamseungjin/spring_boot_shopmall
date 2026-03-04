@@ -19,3 +19,12 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT:6379}
+
+logging:
+  file:
+    name: logs/prod_app.log
+  level:
+    root: INFO
+    com.hsj: INFO
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
