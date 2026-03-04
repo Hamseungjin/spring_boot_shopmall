@@ -10,6 +10,14 @@ spring:
 
 server:
   port: 8081
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: logs
+      prefix: access_log
+      suffix: .log
+      pattern: "%h %l %u %t \"%r\" %s %b %D"
+      file-date-format: .yyyy-MM-dd
 
 jwt:
   secret: ${JWT_SECRET:Y2hhbmdlLXRoaXMtdG8tYS1zZWN1cmUtcmFuZG9tLWtleS1pbi1wcm9kdWN0aW9uLWVudmlyb25tZW50LW11c3QtYmUtMjU2LWJpdHM=}
