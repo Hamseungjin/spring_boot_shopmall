@@ -7,6 +7,7 @@ import com.hsj.entity.Order;
 import com.hsj.entity.Payment;
 import com.hsj.entity.enums.OrderStatus;
 import com.hsj.entity.enums.PaymentStatus;
+import com.hsj.event.PaymentCompletedEvent;
 import com.hsj.exception.BusinessException;
 import com.hsj.exception.DuplicateException;
 import com.hsj.exception.ErrorCode;
@@ -15,6 +16,7 @@ import com.hsj.repository.OrderRepository;
 import com.hsj.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public PaymentResponse processPayment(PaymentRequest request, String paidBy) {
@@ -70,8 +73,10 @@ public class PaymentService {
                     OrderStatus.PAID, "결제 완료");
             orderService.changeOrderStatus(order.getId(), statusChange, paidBy);
 
-            log.info("결제 완료: paymentId={}, orderId={}, amount={}, key={}",
-                    payment.getId(), order.getId(), payment.getAmount(), payment.getIdempotencyKey());
+            // 결제 완료 후처리(알림·포인트·마케팅)를 트랜잭션 커밋 후 비동기로 실행
+            publisher.publishEvent(new PaymentCompletedEvent(
+                    payment.getId(), order.getId(), payment.getAmount(), payment.getIdempotencyKey()
+            ));
 
         } catch (Exception e) {
             payment.fail();

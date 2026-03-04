@@ -4,6 +4,7 @@ import com.hsj.dto.common.PageResponse;
 import com.hsj.dto.product.*;
 import com.hsj.entity.Category;
 import com.hsj.entity.Product;
+import com.hsj.event.OldImageCleanupEvent;
 import com.hsj.exception.ErrorCode;
 import com.hsj.exception.NotFoundException;
 import com.hsj.repository.CategoryRepository;
@@ -11,6 +12,7 @@ import com.hsj.repository.ProductRepository;
 import com.hsj.service.storage.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final StorageService storageService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public ProductResponse create(ProductCreateRequest request) {
@@ -95,7 +98,8 @@ public class ProductService {
         Product product = findProductOrThrow(id);
 
         if (product.getImageUrl() != null) {
-            storageService.delete(product.getImageUrl());
+            // 새 이미지 커밋 후 비동기 삭제 — 업로드 실패 시 이전 이미지 보존
+            publisher.publishEvent(new OldImageCleanupEvent(product.getImageUrl()));
         }
 
         String storedPath = storageService.store(file, "products");

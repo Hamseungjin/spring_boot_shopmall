@@ -6,12 +6,14 @@ import com.hsj.entity.*;
 import com.hsj.entity.enums.OrderItemStatus;
 import com.hsj.entity.enums.OrderStatus;
 import com.hsj.entity.enums.PaymentStatus;
+import com.hsj.event.OrderHistoryEvent;
 import com.hsj.exception.BusinessException;
 import com.hsj.exception.ErrorCode;
 import com.hsj.exception.NotFoundException;
 import com.hsj.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final PaymentRepository paymentRepository;
     private final StockService stockService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public OrderResponse createOrder(Long memberId, OrderCreateRequest request) {
@@ -75,10 +78,10 @@ public class OrderService {
 
         Order saved = orderRepository.save(order);
 
-        orderHistoryRepository.save(
-                OrderHistory.record(saved, null, OrderStatus.PENDING_PAYMENT,
-                        "주문 생성", member.getEmail())
-        );
+        // 주문 트랜잭션 커밋 후 비동기로 이력 기록 (실패해도 주문에 영향 없음)
+        publisher.publishEvent(new OrderHistoryEvent(
+                saved.getId(), null, OrderStatus.PENDING_PAYMENT, "주문 생성", member.getEmail()
+        ));
 
         log.info("주문 생성 완료: orderId={}, orderNumber={}, memberId={}, totalAmount={}",
                 saved.getId(), saved.getOrderNumber(), memberId, saved.getTotalAmount());
@@ -132,10 +135,9 @@ public class OrderService {
             });
         }
 
-        orderHistoryRepository.save(
-                OrderHistory.record(order, previousStatus, request.getStatus(),
-                        request.getReason(), changedBy)
-        );
+        publisher.publishEvent(new OrderHistoryEvent(
+                orderId, previousStatus, request.getStatus(), request.getReason(), changedBy
+        ));
 
         log.info("주문 상태 변경: orderId={}, {} → {}", orderId, previousStatus, request.getStatus());
         return OrderResponse.from(order);
@@ -169,10 +171,10 @@ public class OrderService {
             });
         }
 
-        orderHistoryRepository.save(
-                OrderHistory.record(order, previousStatus, OrderStatus.CANCELLED,
-                        reason != null ? reason : "고객 요청 취소", cancelledBy)
-        );
+        publisher.publishEvent(new OrderHistoryEvent(
+                orderId, previousStatus, OrderStatus.CANCELLED,
+                reason != null ? reason : "고객 요청 취소", cancelledBy
+        ));
 
         log.info("주문 취소 완료: orderId={}, orderNumber={}", orderId, order.getOrderNumber());
         return OrderResponse.from(order);
@@ -197,12 +199,11 @@ public class OrderService {
 
         order.calculateTotalAmount();
 
-        orderHistoryRepository.save(
-                OrderHistory.record(order, order.getStatus(), order.getStatus(),
-                        "아이템 부분 취소: " + target.getSnapshotProductName() +
-                                (reason != null ? " - " + reason : ""),
-                        cancelledBy)
-        );
+        publisher.publishEvent(new OrderHistoryEvent(
+                orderId, order.getStatus(), order.getStatus(),
+                "아이템 부분 취소: " + target.getSnapshotProductName() + (reason != null ? " - " + reason : ""),
+                cancelledBy
+        ));
 
         log.info("주문 아이템 취소: orderId={}, orderItemId={}", orderId, orderItemId);
         return OrderResponse.from(order);

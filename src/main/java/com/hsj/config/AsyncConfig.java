@@ -21,4 +21,28 @@ public class AsyncConfig {
         executor.initialize();
         return executor;
     }
+
+    /** 주문 이력(OrderHistory) 비동기 저장 전용 풀 */
+    @Bean(name = "orderHistoryExecutor")
+    public Executor orderHistoryExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(200);
+        executor.setThreadNamePrefix("order-history-");
+        executor.initialize();
+        return executor;
+    }
+
+    /** Redis 통계(조회수·방문자) 비동기 기록 전용 풀 */
+    @Bean(name = "statsExecutor")
+    public Executor statsExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(1000);
+        executor.setThreadNamePrefix("stats-");
+        executor.initialize();
+        return executor;
+    }
 }

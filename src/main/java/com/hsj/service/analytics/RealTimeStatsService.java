@@ -3,6 +3,7 @@ package com.hsj.service.analytics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -48,6 +49,8 @@ public class RealTimeStatsService {
         return size != null ? size : 0;
     }
 
+    /** 상품 조회수 증가 — 실패해도 상품 조회에 영향 없으므로 비동기 처리 */
+    @Async("statsExecutor")
     public void incrementProductView(Long productId) {
         String key = PRODUCT_VIEW_PREFIX + productId;
         redisTemplate.opsForValue().increment(key);
@@ -58,6 +61,8 @@ public class RealTimeStatsService {
         return value != null ? Long.parseLong(value) : 0;
     }
 
+    /** 일일 방문자 기록 — 통계 목적이므로 시차 허용, 비동기 처리 */
+    @Async("statsExecutor")
     public void recordDailyVisitor(String date, String sessionId) {
         String key = DAILY_VISITORS_PREFIX + date;
         redisTemplate.opsForHyperLogLog().add(key, sessionId);
