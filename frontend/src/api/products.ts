@@ -41,7 +41,7 @@ export const productApi = {
 
   uploadImage: (id: number, file: File) => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
     return api.post<ApiResponse<Product>>(`/products/${id}/image`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });

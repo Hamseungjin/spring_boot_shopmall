@@ -19,17 +19,32 @@ public class RealTimeStatsService {
 
     private final RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * 세션을 Sorted Set에 현재 타임스탬프(score)로 등록한다.
+     * score 기반으로 개별 세션의 활성 시각을 추적하므로 세션마다 독립적으로 만료된다.
+     */
     public void recordUserOnline(String sessionId) {
-        redisTemplate.opsForSet().add(ONLINE_USERS_KEY, sessionId);
-        redisTemplate.expire(ONLINE_USERS_KEY, SESSION_TTL_SECONDS, TimeUnit.SECONDS);
+        double now = System.currentTimeMillis();
+        redisTemplate.opsForZSet().add(ONLINE_USERS_KEY, sessionId, now);
     }
 
+    /**
+     * 세션을 Sorted Set에서 즉시 제거한다 (로그아웃/연결 종료 시).
+     */
     public void removeUserOnline(String sessionId) {
-        redisTemplate.opsForSet().remove(ONLINE_USERS_KEY, sessionId);
+        redisTemplate.opsForZSet().remove(ONLINE_USERS_KEY, sessionId);
     }
 
+    /**
+     * TTL_SECONDS 이내에 활동한 세션 수를 반환한다.
+     * 조회 전 오래된 세션을 정리하여 정확한 카운트를 보장한다.
+     */
     public long getOnlineUserCount() {
-        Long size = redisTemplate.opsForSet().size(ONLINE_USERS_KEY);
+        long now = System.currentTimeMillis();
+        long cutoff = now - SESSION_TTL_SECONDS * 1000;
+        // 만료된 세션(활동 시각이 cutoff 이전) 제거
+        redisTemplate.opsForZSet().removeRangeByScore(ONLINE_USERS_KEY, 0, cutoff);
+        Long size = redisTemplate.opsForZSet().zCard(ONLINE_USERS_KEY);
         return size != null ? size : 0;
     }
 
